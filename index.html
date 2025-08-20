@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math Sprint: Brain Booster</title>
+    
+    <!-- Google Fonts for a fun, clean look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Fredoka+One&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- General Styling & CSS Variables --- */
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --background-color: #f0f2f5;
+            --container-bg: #ffffff;
+            --text-color: #333;
+            --correct-color: #28a745;
+            --wrong-color: #dc3545;
+            --font-main: 'Poppins', sans-serif;
+            --font-title: 'Fredoka One', cursive;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            /* NEW: Animated Gradient Background */
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color), #8a2be2, #4158d0);
+            background-size: 400% 400%;
+            animation: gradientAnimation 15s ease infinite;
+            color: var(--text-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-x: hidden;
+        }
+
+        /* NEW: Keyframe animation for the background */
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- Header & Footer Styling --- */
+        .site-header, .site-footer {
+            width: 100%;
+            max-width: 728px;
+            color: white;
+            text-align: center;
+            padding: 0.5rem 1rem;
+        }
+
+        .site-header {
+            font-family: var(--font-title);
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .site-footer {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        /* --- Ad Slot Placeholders --- */
+        .ad-slot {
+            width: 100%;
+            max-width: 728px;
+            height: 90px;
+            background-color: #e9ecef;
+            border: 2px dashed #adb5bd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0.5rem 0;
+            border-radius: 12px;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* --- Main Game Container --- */
+        .game-container {
+            background-color: var(--container-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            padding: 2rem;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Screen-Specific Styling --- */
+        h1, h2 {
+            font-family: var(--font-title);
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+
+        #start-screen p {
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .level-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn {
+            background-image: linear-gradient(to right, var(--secondary-color) 0%, var(--primary-color) 51%, var(--secondary-color) 100%);
+            background-size: 200% auto;
+            border: none;
+            border-radius: 12px;
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background-position: right center;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
+        }
+        
+        .btn:active { transform: translateY(0); }
+
+        /* --- Game Screen Elements --- */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        #timer-container {
+            text-align: right;
+        }
+        
+        #timer-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        #timer-bar {
+            height: 100%;
+            width: 100%;
+            background-color: var(--primary-color);
+            border-radius: 4px;
+            transition: width 1s linear;
+        }
+
+        #question-container {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            color: var(--text-color);
+        }
+
+        /* NEW: Styles for answer options */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Two columns */
+            gap: 1rem; /* Space between buttons */
+            margin-bottom: 1rem;
+        }
+
+        .option-btn {
+            /* Inherits .btn styles, add specific overrides if needed */
+            font-size: 1.5rem; /* Larger font for options */
+            padding: 1rem 0.5rem;
+        }
+        
+        #answer-input { /* Kept for reference but not used */
+            width: 100%;
+            padding: 1rem;
+            font-size: 2rem;
+            text-align: center;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            font-family: var(--font-main);
+        }
+        
+        #answer-input:focus { /* Kept for reference but not used */
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        #feedback-container {
+            min-height: 80px;
+            margin-top: 1rem;
+            font-size: 1.5rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feedback-icon {
+            width: 60px;
+            height: 60px;
+            display: none;
+            animation: pop 0.5s ease-out;
+        }
+
+        .feedback-icon.correct {
+            color: var(--correct-color);
+        }
+
+        .feedback-icon.wrong {
+            color: var(--wrong-color);
+        }
+        
+        @keyframes pop {
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        /* --- Responsive Design --- */
+        @media (max-width: 480px) {
+            body { padding: 0.5rem; }
+            .game-container { padding: 1.5rem; }
+            h1 { font-size: 2rem; }
+            #question-container { font-size: 2.5rem; }
+            .btn { padding: 0.8rem 1.5rem; font-size: 1rem; }
+            .site-header { font-size: 1.2rem; }
+            .options-grid {
+                grid-template-columns: 1fr; /* Single column on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="site-header">Boost Your Brain</header>
+    <div class="ad-slot" id="ad-banner-top">Top Banner Ad (e.g., 728x90)</div>
+
+    <div class="game-container">
+        <div id="start-screen">
+            <h1>Math Sprint</h1>
+            <p>Choose a level to test your brain and boost your math skills!</p>
+            <div class="level-buttons">
+                <button class="btn" onclick="startGame('easy')">Easy</button>
+                <button class="btn" onclick="startGame('medium')">Medium</button>
+                <button class="btn" onclick="startGame('hard')">Hard</button>
+            </div>
+        </div>
+
+        <div id="game-screen" class="hidden">
+            <div class="game-header">
+                <div id="score">Score: 0</div>
+                <div id="timer-container">
+                    <div id="timer">Time: 10</div>
+                </div>
+            </div>
+            <div id="timer-bar-container"><div id="timer-bar"></div></div>
+            <div id="question-container">10 + 5 = ?</div>
+            <!-- Removed answer input and submit button -->
+            <div id="options-container" class="options-grid">
+                <!-- Answer options will be dynamically generated here -->
+            </div>
+            <div id="feedback-container">
+                <svg id="correct-icon" class="feedback-icon correct" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"></path></svg>
+                <svg id="wrong-icon" class="feedback-icon wrong" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.47 2 2 6.47 2 12s4.47 10 10 10 10-4.47 10-10S17.53 2 12 2zm5 13.59L15.59 17 12 13.41 8.41 17 7 15.59 10.59 12 7 8.41 8.41 7 12 10.59 15.59 7 17 8.41 13.41 12 17 15.59z"></path></svg>
+                <span id="feedback-text"></span>
+            </div>
+        </div>
+        
+        <div id="game-over-screen" class="hidden">
+            <h2>Game Over!</h2>
+            <p id="final-score" style="font-size: 1.5rem; margin: 1rem 0;"></p>
+            <p id="final-message" style="margin-bottom: 2rem;"></p>
+            <button class="btn" onclick="restartGame()">Play Again</button>
+        </div>
+    </div>
+
+    <div class="ad-slot" id="ad-banner-bottom">Bottom Banner Ad (e.g., 320x100)</div>
+    <footer class="site-footer">&copy; 2025 Math Sprint | Wednesday, August 20, 2025 | India</footer>
+
+    <script>
+        // --- DOM Element References ---
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const gameOverScreen = document.getElementById('game-over-screen');
+        const scoreDisplay = document.getElementById('score');
+        const timerDisplay = document.getElementById('timer');
+        const timerBar = document.getElementById('timer-bar');
+        const questionContainer = document.getElementById('question-container');
+        // const answerInput = document.getElementById('answer-input'); // Removed
+        const optionsContainer = document.getElementById('options-container'); // New reference
+        const feedbackContainer = document.getElementById('feedback-container');
+        const feedbackText = document.getElementById('feedback-text');
+        const correctIcon = document.getElementById('correct-icon');
+        const wrongIcon = document.getElementById('wrong-icon');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const finalMessageDisplay = document.getElementById('final-message');
+
+        // --- Game State Variables ---
+        let currentLevel = '';
+        let score = 0;
+        let currentQuestion = { text: '', answer: 0 };
+        let timer;
+        const FULL_TIME = 10;
+        let timeLeft = FULL_TIME;
+
+        // --- Web Audio API for sound effects ---
+        let audioContext;
+        const playSound = (type) => {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            if (type === 'correct') {
+                oscillator.type = 'sine';
+                oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            } else { // 'wrong' or 'timeout'
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(150, audioContext.currentTime);
+                gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+            }
+            
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 0.2);
+        };
+
+        // --- Utility function to shuffle an array ---
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function startGame(level) {
+            currentLevel = level;
+            score = 0;
+            scoreDisplay.textContent = `Score: ${score}`;
+            startScreen.classList.add('hidden');
+            gameOverScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            generateQuestion();
+        }
+
+        function generateQuestion() {
+            feedbackText.textContent = '';
+            correctIcon.style.display = 'none';
+            wrongIcon.style.display = 'none';
+            optionsContainer.innerHTML = ''; // Clear previous options
+
+            let num1, num2, operator, questionText, correctAnswer;
+            let options = []; // To store all answer options
+
+            switch (currentLevel) {
+                case 'easy':
+                    num1 = Math.floor(Math.random() * 10) + 1;
+                    num2 = Math.floor(Math.random() * 10) + 1;
+                    operator = Math.random() > 0.5 ? '+' : '-';
+                    if (operator === '-' && num1 < num2) [num1, num2] = [num2, num1];
+                    correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
+                    break;
+                case 'medium':
+                    num1 = Math.floor(Math.random() * 50) + 10;
+                    num2 = Math.floor(Math.random() * 50) + 10;
+                    operator = Math.random() > 0.5 ? '+' : '-';
+                    if (operator === '-' && num1 < num2) [num1, num2] = [num2, num1];
+                    correctAnswer = operator === '+' ? num1 + num2 : num1 - num2;
+                    break;
+                case 'hard':
+                    operator = Math.random() > 0.5 ? '×' : '÷';
+                    if (operator === '×') {
+                        num1 = Math.floor(Math.random() * 10) + 2;
+                        num2 = Math.floor(Math.random() * 10) + 2;
+                        correctAnswer = num1 * num2;
+                    } else { // Division
+                        correctAnswer = Math.floor(Math.random() * 10) + 2; // Ensure result is positive
+                        num2 = Math.floor(Math.random() * 10) + 2;
+                        num1 = correctAnswer * num2; // Make num1 a multiple of num2
+                    }
+                    break;
+            }
+            questionText = `${num1} ${operator} ${num2} = ?`;
+            currentQuestion = { text: questionText, answer: correctAnswer };
+            questionContainer.textContent = currentQuestion.text;
+
+            // Generate incorrect options
+            options.push(correctAnswer); // Add correct answer first
+            while (options.length < 4) { // Ensure 4 unique options
+                let incorrectAnswer;
+                if (currentLevel === 'easy') {
+                    incorrectAnswer = correctAnswer + Math.floor(Math.random() * 5) * (Math.random() > 0.5 ? 1 : -1) + (Math.random() > 0.5 ? 1 : -1);
+                    if (incorrectAnswer < 0) incorrectAnswer = Math.abs(incorrectAnswer); // Prevent negative options for easy
+                } else if (currentLevel === 'medium') {
+                    incorrectAnswer = correctAnswer + Math.floor(Math.random() * 15) * (Math.random() > 0.5 ? 1 : -1) + (Math.random() > 0.5 ? 1 : -1);
+                } else { // Hard
+                    incorrectAnswer = correctAnswer + Math.floor(Math.random() * 20) * (Math.random() > 0.5 ? 1 : -1) + (Math.random() > 0.5 ? 1 : -1);
+                }
+                
+                // Ensure incorrect answer is not the same as correct answer and is unique among options
+                if (!options.includes(incorrectAnswer)) {
+                    options.push(incorrectAnswer);
+                }
+            }
+
+            // Shuffle the options to randomize their positions
+            shuffleArray(options);
+
+            // Create and append option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.classList.add('btn', 'option-btn');
+                button.textContent = option;
+                button.onclick = () => selectAnswer(option);
+                optionsContainer.appendChild(button);
+            });
+
+            startTimer();
+        }
+
+        function startTimer() {
+            clearInterval(timer);
+            timeLeft = FULL_TIME;
+            timerDisplay.textContent = `Time: ${timeLeft}`;
+            timerBar.style.transition = 'none';
+            timerBar.style.width = '100%';
+            
+            // Force reflow to reset transition
+            void timerBar.offsetWidth; 
+
+            timerBar.style.transition = `width ${FULL_TIME}s linear`;
+            timerBar.style.width = '0%';
+
+            timer = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Time: ${timeLeft}`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    playSound('wrong');
+                    // Treat time out as an incorrect answer
+                    handleAnswer(false, "Time's up! The answer was " + currentQuestion.answer + ".");
+                }
+            }, 1000);
+        }
+
+        // NEW: Function to handle selected answer
+        function selectAnswer(selectedAnswer) {
+            clearInterval(timer); // Stop the timer when an answer is selected
+            timerBar.style.width = timerBar.style.width; // Stop timer bar animation
+            
+            const userAnswer = parseInt(selectedAnswer, 10);
+
+            if (userAnswer === currentQuestion.answer) {
+                score++;
+                scoreDisplay.textContent = `Score: ${score}`;
+                playSound('correct');
+                handleAnswer(true, "Great job!");
+            } else {
+                playSound('wrong');
+                handleAnswer(false, `Oops! The correct answer was ${currentQuestion.answer}.`);
+            }
+        }
+        
+        function handleAnswer(isCorrect, message) {
+            // Disable all option buttons to prevent multiple clicks
+            Array.from(optionsContainer.children).forEach(button => {
+                button.disabled = true;
+            });
+
+            feedbackText.textContent = message;
+            
+            if (isCorrect) {
+                correctIcon.style.display = 'block';
+            } else {
+                wrongIcon.style.display = 'block';
+            }
+
+            setTimeout(() => {
+                if (score > 0 && score % 10 === 0 && isCorrect) {
+                     endGame();
+                } else {
+                     generateQuestion();
+                }
+            }, 1800); // Wait for feedback to be seen
+        }
+
+        function endGame() {
+            gameScreen.classList.add('hidden');
+            gameOverScreen.classList.remove('hidden');
+            finalScoreDisplay.textContent = `Your Final Score: ${score}`;
+            
+            let finalMessage = "Keep practicing!";
+            if (score >= 8) finalMessage = "Excellent work! You're a math wizard!";
+            else if (score >= 5) finalMessage = "Good job! You're getting sharp!";
+            
+            finalMessageDisplay.textContent = finalMessage;
+        }
+
+        function restartGame() {
+            gameOverScreen.classList.add('hidden');
+            startScreen.classList.remove('hidden');
+        }
+
+        // Removed event listener for 'Enter' key as there's no input field
+        // answerInput.addEventListener('keydown', function(event) {
+        //     if (event.key === 'Enter') {
+        //         checkAnswer();
+        //     }
+        // });
+
+    </script>
+</body>
+</html>
